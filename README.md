@@ -431,6 +431,7 @@ php -d extension_dir=C:\php\ext `
 
 ## Contato
 
+- Portfólio: [jeffersontadeu.vercel.app](https://jeffersontadeu.vercel.app)
 - GitHub: [github.com/auhauhbr](https://github.com/auhauhbr)
 - LinkedIn: [Jefferson Tadeu dos Santos](https://www.linkedin.com/in/jefferson-tadeu-dos-santos-0ab133380)
 - E-mail: [tadeu.santos7148@gmail.com](mailto:tadeu.santos7148@gmail.com)
