@@ -1,0 +1,54 @@
+"Data e hora no formato usado pelo Laravel."
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+"Consultas públicas disponíveis no catálogo Lumora."
+type Query {
+    "Lista produtos ativos pertencentes a categorias ativas."
+    products(
+        search: String
+        category: String
+        min_price: Float
+        max_price: Float
+        in_stock: Boolean
+    ): [Product!]!
+        @field(resolver: "App\\GraphQL\\Consultas\\ProdutosConsulta")
+
+    "Busca um produto público pelo slug."
+    product(slug: String!): Product
+        @field(resolver: "App\\GraphQL\\Consultas\\ProdutoConsulta")
+
+    "Lista as categorias ativas."
+    categories: [Category!]!
+        @field(resolver: "App\\GraphQL\\Consultas\\CategoriasConsulta")
+}
+
+"Categoria pública do catálogo."
+type Category {
+    id: ID!
+    name: String!
+    slug: String!
+    description: String
+    is_active: Boolean!
+    products: [Product!]!
+        @field(resolver: "App\\GraphQL\\Campos\\ProdutosDaCategoriaCampo")
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+"Produto público disponível no catálogo."
+type Product {
+    id: ID!
+    name: String!
+    slug: String!
+    description: String
+    price: Float!
+    stock: Int!
+    image_url: String
+    is_active: Boolean!
+    available: Boolean!
+        @field(resolver: "App\\GraphQL\\Campos\\DisponibilidadeProdutoCampo")
+    category: Category!
+        @belongsTo(relation: "categoria")
+    created_at: DateTime!
+    updated_at: DateTime!
+}
