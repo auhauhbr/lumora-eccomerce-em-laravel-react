@@ -436,15 +436,6 @@ php -d extension_dir=C:\php\ext `
     vendor\bin\phpunit
 ```
 
-## Próximos passos possíveis
-
-- adicionar screenshots finais do checkout e painel admin;
-- trocar URLs externas por imagens próprias hospedadas no projeto;
-- publicar em ambiente de homologação;
-- configurar webhook real do Mercado Pago em produção;
-- adicionar cálculo de frete real;
-- criar testes end-to-end do fluxo de compra.
-
 ## Contato
 
 - Portfólio: [jeffersontadeu.vercel.app](https://jeffersontadeu.vercel.app)
