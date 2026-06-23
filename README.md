@@ -79,19 +79,35 @@ estética séria e tecnológica.
 
 ## Capturas de tela
 
-### Catálogo com filtros e cards
+### Catálogo do usuário
 
-<a href="docs/screenshots/catalogo-grade.png">
+<a href="docs/screenshots/catalogo-usuario.png">
   <img
-    src="docs/screenshots/catalogo-grade.png"
+    src="docs/screenshots/catalogo-usuario.png"
     alt="Catálogo da Lumora com filtros, produtos e alternância de visualização"
     width="100%"
   >
 </a>
 
-> As próximas capturas recomendadas para a documentação são: detalhe do produto,
-> checkout e painel administrativo. A estrutura já está pronta para receber esses
-> arquivos em `docs/screenshots/`.
+### Detalhe do produto
+
+<a href="docs/screenshots/produto-detalhe.png">
+  <img
+    src="docs/screenshots/produto-detalhe.png"
+    alt="Página de detalhe do produto com galeria, preço, estoque e compra"
+    width="100%"
+  >
+</a>
+
+### Área do cliente
+
+<a href="docs/screenshots/perfil-cliente.png">
+  <img
+    src="docs/screenshots/perfil-cliente.png"
+    alt="Área Minha Conta da Lumora com pedidos, endereços e dados do cliente"
+    width="100%"
+  >
+</a>
 
 ## Arquitetura
 
@@ -422,7 +438,7 @@ php -d extension_dir=C:\php\ext `
 
 ## Próximos passos possíveis
 
-- adicionar screenshots finais do detalhe do produto, checkout e painel admin;
+- adicionar screenshots finais do checkout e painel admin;
 - trocar URLs externas por imagens próprias hospedadas no projeto;
 - publicar em ambiente de homologação;
 - configurar webhook real do Mercado Pago em produção;
