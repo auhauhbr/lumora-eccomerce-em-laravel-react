@@ -289,6 +289,7 @@ export function Aplicacao() {
                 aoAbrirCarrinho={() => setCarrinhoAberto(true)}
                 aoAbrirLogin={() => setLoginAberto(true)}
                 aoAbrirConta={abrirConta}
+                aoSair={() => void sair()}
                 aoAlternarFiltros={() => setFiltrosAbertos((atual) => !atual)}
             />
 

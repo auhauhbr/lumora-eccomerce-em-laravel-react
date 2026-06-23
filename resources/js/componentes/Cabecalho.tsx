@@ -1,5 +1,5 @@
 import type { Usuario } from '../tipos/catalogo';
-import { LogIn, Menu, ShoppingBag, UserRound } from './Icones';
+import { LogIn, LogOut, Menu, ShoppingBag, UserRound } from './Icones';
 
 type Propriedades = {
     usuario: Usuario | null;
@@ -7,6 +7,7 @@ type Propriedades = {
     aoAbrirCarrinho: () => void;
     aoAbrirLogin: () => void;
     aoAbrirConta: () => void;
+    aoSair: () => void;
     aoAlternarFiltros: () => void;
 };
 
@@ -16,6 +17,7 @@ export function Cabecalho({
     aoAbrirCarrinho,
     aoAbrirLogin,
     aoAbrirConta,
+    aoSair,
     aoAlternarFiltros,
 }: Propriedades) {
     return (
@@ -50,6 +52,13 @@ export function Cabecalho({
                         Entrar
                     </button>
                 )}
+
+                {usuario ? (
+                    <button className="botao-sair" type="button" onClick={aoSair}>
+                        <LogOut size={15} />
+                        Sair
+                    </button>
+                ) : null}
 
                 <button className="botao-carrinho" type="button" onClick={aoAbrirCarrinho}>
                     <ShoppingBag size={16} />
