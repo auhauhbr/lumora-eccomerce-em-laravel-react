@@ -21,6 +21,9 @@
   </p>
 
   <p>
+    <a href="https://jeffersontadeu.vercel.app">
+      <img src="https://img.shields.io/badge/Portfólio-online-0EA5E9?style=for-the-badge&logo=vercel&logoColor=white" alt="Portfólio">
+    </a>
     <a href="https://github.com/auhauhbr">
       <img src="https://img.shields.io/badge/GitHub-auhauhbr-181717?style=for-the-badge&logo=github" alt="GitHub">
     </a>
