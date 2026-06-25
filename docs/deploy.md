@@ -177,6 +177,161 @@ Configure a URL de webhook no Mercado Pago para:
 https://seu-dominio.example/api/webhooks/mercado-pago
 ```
 
+## Railway
+
+O Railway é uma boa opção para este projeto porque permite separar a aplicação
+Laravel, o worker de fila e o banco em serviços diferentes dentro do mesmo
+projeto.
+
+A documentação atual do Railway para Laravel recomenda uma arquitetura
+"majestic monolith": um serviço para o app HTTP, um serviço para worker, um
+serviço opcional para cron e um serviço de banco. O exemplo oficial usa
+Postgres por padrão, mas o Railway também documenta MySQL. Como a Lumora já usa
+MariaDB/MySQL, mantenha `DB_CONNECTION=mysql` e crie um serviço MySQL/MariaDB no
+Railway. Migrar para Postgres exigiria revisar conexão, tipos SQL e testar todas
+as migrations/queries antes do deploy.
+
+### Serviços
+
+Crie estes serviços no Railway:
+
+- `lumora-app`: serviço HTTP público conectado ao repositório;
+- `lumora-worker`: serviço privado conectado ao mesmo repositório;
+- `lumora-mysql`: banco MySQL/MariaDB;
+- cron: não necessário hoje, porque o projeto não possui jobs agendados além do
+  comando padrão `inspire`.
+
+Não crie domínio público para o worker ou para o banco.
+
+### App Service
+
+Build command:
+
+```bash
+npm run build
+```
+
+Pre-deploy command:
+
+```bash
+chmod +x ./railway/init-app.sh && sh ./railway/init-app.sh
+```
+
+Start command:
+
+```text
+Deixe o Railway/Railpack detectar Laravel e iniciar via PHP-FPM/Caddy.
+```
+
+Healthcheck path:
+
+```text
+/up
+```
+
+### Worker Service
+
+Use o mesmo repositório, mas sem domínio público.
+
+Start command:
+
+```bash
+chmod +x ./railway/run-worker.sh && sh ./railway/run-worker.sh
+```
+
+O worker usa:
+
+```bash
+php artisan queue:work database --sleep=3 --tries=3 --timeout=90
+```
+
+### Migrações
+
+As migrações são executadas pelo pre-deploy do app:
+
+```bash
+php artisan migrate --force
+```
+
+Não execute seeders em produção. Se precisar criar administrador, faça isso por
+processo operacional controlado, com senha gerada fora do Git.
+
+### Variáveis No Railway
+
+Configure as variáveis no painel do Railway, não no repositório:
+
+```env
+APP_NAME=
+APP_ENV=production
+APP_KEY=
+APP_DEBUG=false
+APP_URL=
+FRONTEND_URL=
+
+APP_LOCALE=pt_BR
+APP_FALLBACK_LOCALE=pt_BR
+APP_FAKER_LOCALE=pt_BR
+
+LOG_CHANNEL=stderr
+LOG_STDERR_FORMATTER=Monolog\Formatter\JsonFormatter
+LOG_LEVEL=warning
+
+DB_CONNECTION=mysql
+DB_HOST=
+DB_PORT=3306
+DB_DATABASE=
+DB_USERNAME=
+DB_PASSWORD=
+
+CACHE_STORE=database
+QUEUE_CONNECTION=database
+SESSION_DRIVER=database
+SESSION_ENCRYPT=true
+SESSION_SECURE_COOKIE=true
+SESSION_HTTP_ONLY=true
+SESSION_SAME_SITE=lax
+SESSION_DOMAIN=
+
+SANCTUM_STATEFUL_DOMAINS=
+SANCTUM_TOKEN_PREFIX=lumora_
+
+VIACEP_URL=https://viacep.com.br
+CA_BUNDLE_PATH=
+
+MERCADO_PAGO_ACCESS_TOKEN=
+MERCADO_PAGO_PUBLIC_KEY=
+MERCADO_PAGO_WEBHOOK_SECRET=
+MERCADO_PAGO_SANDBOX=false
+
+MAIL_MAILER=
+MAIL_HOST=
+MAIL_PORT=
+MAIL_USERNAME=
+MAIL_PASSWORD=
+MAIL_FROM_ADDRESS=
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
+No serviço do banco, use as variáveis geradas pelo Railway como referência para
+`DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` e `DB_PASSWORD`. Não copie
+esses valores para arquivos versionados.
+
+### Observações
+
+- Use apenas `lumora-app` com domínio público.
+- Configure `APP_URL` e `FRONTEND_URL` com a URL HTTPS final do Railway ou do
+  domínio customizado.
+- Configure o webhook do Mercado Pago para:
+
+```text
+https://seu-dominio.example/api/webhooks/mercado-pago
+```
+
+- Depois de trocar domínio, atualize `SANCTUM_STATEFUL_DOMAINS`.
+- Se o banco Railway oferecido no seu projeto for Postgres e você decidir usar
+  Postgres, altere `DB_CONNECTION=pgsql`, use a URL/conexão do Postgres e rode a
+  suíte de testes contra esse banco antes de publicar.
+
 ## Rotação De Segredos
 
 Rotacione imediatamente qualquer chave, token ou senha que tenha sido exposto em:
