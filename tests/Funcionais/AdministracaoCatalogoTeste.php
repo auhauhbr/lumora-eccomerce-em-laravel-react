@@ -30,6 +30,7 @@ class AdministracaoCatalogoTeste extends TesteBase
                 'category_id' => $categoria['id'],
                 'name' => 'Notebook Lumora Pro',
                 'description' => 'Notebook para produtividade.',
+                'condition' => 'novo',
                 'price' => 4999.90,
                 'stock' => 10,
             ])

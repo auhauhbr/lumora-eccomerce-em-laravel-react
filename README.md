@@ -219,7 +219,8 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-No Windows, se o arquivo `.env` já existir, apenas confira as variáveis.
+Depois de copiar o arquivo, ajuste os valores locais no `.env`. Nunca use
+credenciais reais em arquivos versionados.
 
 ### Banco de dados
 
@@ -230,8 +231,8 @@ DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=lumora
-DB_USERNAME=root
-DB_PASSWORD=sua_senha
+DB_USERNAME=seu_usuario_local
+DB_PASSWORD=
 ```
 
 Depois rode:
@@ -266,16 +267,19 @@ Acesse:
 http://127.0.0.1:8000
 ```
 
-## Credenciais de demonstração
+## Usuários de desenvolvimento
 
-As credenciais podem ser alteradas no `.env`.
+Os usuários criados pelo seeder devem ser configurados localmente no `.env`:
 
-| Papel | E-mail | Senha |
-|---|---|---|
-| Administrador | `admin@lumora.com.br` | `Admin@123` |
-| Cliente | `cliente@lumora.com.br` | `Cliente@123` |
+```env
+SEED_ADMIN_EMAIL=
+SEED_ADMIN_PASSWORD=
+SEED_CUSTOMER_EMAIL=
+SEED_CUSTOMER_PASSWORD=
+```
 
-> Troque essas senhas antes de publicar o projeto.
+Use senhas fortes e diferentes em cada ambiente. Não publique essas credenciais
+em README, scripts, prints, issues ou pull requests.
 
 ## Mercado Pago
 
@@ -293,6 +297,14 @@ FRONTEND_URL=http://127.0.0.1:8000
 Durante desenvolvimento local, `MERCADO_PAGO_WEBHOOK_SECRET` pode ficar vazio.
 Nesse caso, o webhook aceita notificações sem validar assinatura. Em produção, o
 ideal é configurar o segredo no painel do Mercado Pago e preencher essa variável.
+
+## Deploy seguro
+
+Consulte [docs/deploy.md](docs/deploy.md) antes de publicar a aplicação. O deploy
+de produção deve usar variáveis de ambiente gerenciadas pelo servidor/plataforma,
+`APP_DEBUG=false`, HTTPS, cookies seguros, segredo de webhook obrigatório,
+worker de fila supervisionado e rotação de qualquer chave que já tenha sido
+exposta fora de um cofre de secrets.
 
 ## Rotas principais
 

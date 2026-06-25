@@ -12,9 +12,8 @@ class ValidadorWebhookMercadoPago
     {
         $segredo = config('services.mercado_pago.webhook_secret');
 
-        // Em desenvolvimento, o segredo só ficará disponível após a aplicação ser liberada.
         if (! is_string($segredo) || $segredo === '') {
-            return true;
+            return ! app()->isProduction();
         }
 
         try {

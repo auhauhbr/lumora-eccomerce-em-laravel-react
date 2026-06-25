@@ -1,0 +1,22 @@
+[Unit]
+Description=Lumora Laravel queue worker
+After=network.target mariadb.service
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/lumora/current
+ExecStart=/usr/bin/php artisan queue:work database --sleep=3 --tries=3 --timeout=90
+Restart=always
+RestartSec=5
+KillSignal=SIGTERM
+TimeoutStopSec=60
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ReadWritePaths=/var/www/lumora/current/storage /var/www/lumora/current/bootstrap/cache
+
+[Install]
+WantedBy=multi-user.target

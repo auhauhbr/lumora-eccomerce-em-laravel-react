@@ -18,14 +18,20 @@ use App\Http\Controladores\Api\ProdutoControlador;
 use App\Http\Controladores\Api\WebhookControlador;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/register', [AutenticacaoControlador::class, 'registrar']);
-Route::post('/login', [AutenticacaoControlador::class, 'entrar']);
+Route::post('/register', [AutenticacaoControlador::class, 'registrar'])
+    ->middleware('throttle:autenticacao');
+Route::post('/login', [AutenticacaoControlador::class, 'entrar'])
+    ->middleware('throttle:autenticacao');
 
-Route::get('/categories', [CategoriaControlador::class, 'listar']);
-Route::get('/brands', [MarcaControlador::class, 'listar']);
-Route::get('/products', [ProdutoControlador::class, 'listar']);
-Route::get('/products/{produto}', [ProdutoControlador::class, 'detalhar']);
-Route::post('/webhooks/mercado-pago', [WebhookControlador::class, 'mercadoPago']);
+Route::middleware('throttle:api-publica')->group(function (): void {
+    Route::get('/categories', [CategoriaControlador::class, 'listar']);
+    Route::get('/brands', [MarcaControlador::class, 'listar']);
+    Route::get('/products', [ProdutoControlador::class, 'listar']);
+    Route::get('/products/{produto}', [ProdutoControlador::class, 'detalhar']);
+});
+
+Route::post('/webhooks/mercado-pago', [WebhookControlador::class, 'mercadoPago'])
+    ->middleware('throttle:webhook-pagamento');
 
 Route::middleware('auth:sanctum')->group(function (): void {
     Route::post('/logout', [AutenticacaoControlador::class, 'sair']);

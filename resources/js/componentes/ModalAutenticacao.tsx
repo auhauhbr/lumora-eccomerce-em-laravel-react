@@ -21,8 +21,8 @@ export function ModalAutenticacao({
 }: Propriedades) {
     const [modo, setModo] = useState<'entrar' | 'registrar'>('entrar');
     const [nome, setNome] = useState('');
-    const [email, setEmail] = useState('cliente@lumora.com.br');
-    const [senha, setSenha] = useState('Cliente@123');
+    const [email, setEmail] = useState('');
+    const [senha, setSenha] = useState('');
     const [erro, setErro] = useState('');
     const [enviando, setEnviando] = useState(false);
 
