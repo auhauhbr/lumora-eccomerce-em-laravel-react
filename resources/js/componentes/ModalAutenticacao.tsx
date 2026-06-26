@@ -68,7 +68,9 @@ export function ModalAutenticacao({
                     <X size={19} />
                 </button>
                 <div className="autenticacao-marca">
-                    <span>L</span>
+                    <span className="autenticacao-simbolo">
+                        <img src="/imagens/marca/lumora-logo.png" alt="Lumora" />
+                    </span>
                     <div>
                         <b>Lumora</b>
                         <small>Comércio digital confiável</small>
@@ -121,7 +123,7 @@ export function ModalAutenticacao({
                 </form>
                 <div className="credencial-demonstracao">
                     <Check size={15} />
-                    A conta de demonstração já está preenchida.
+                    Use as credenciais de demonstração configuradas no ambiente.
                 </div>
                 <button
                     className="alternar-autenticacao"

@@ -11,13 +11,21 @@
 
   <p>
     E-commerce brasileiro de tecnologia, periféricos e produtos conectados,
-    desenvolvido com Laravel, MySQL, React, TypeScript, GraphQL e Mercado Pago.
+    publicado no Railway com Laravel, React/Vite, MySQL/MariaDB, Sanctum,
+    Mercado Pago, ViaCEP e fila em banco de dados.
+  </p>
+
+  <p>
+    <a href="https://lumora-eccomerce-em-laravel-react-production.up.railway.app">
+      <img src="https://img.shields.io/badge/Deploy-Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white" alt="Deploy no Railway">
+    </a>
   </p>
 
   <p>
     <img src="https://img.shields.io/badge/status-em_desenvolvimento-0EA5E9?style=for-the-badge" alt="Status">
     <img src="https://img.shields.io/badge/stack-fullstack-0B1929?style=for-the-badge" alt="Fullstack">
     <img src="https://img.shields.io/badge/pagamento-Mercado_Pago-009EE3?style=for-the-badge" alt="Mercado Pago">
+    <img src="https://img.shields.io/badge/deploy-Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white" alt="Railway">
   </p>
 
   <p>
@@ -35,7 +43,7 @@
   <p>
     <img src="https://img.shields.io/badge/Laravel-13-FF2D20?style=flat-square&logo=laravel&logoColor=white" alt="Laravel">
     <img src="https://img.shields.io/badge/PHP-8.3-777BB4?style=flat-square&logo=php&logoColor=white" alt="PHP">
-    <img src="https://img.shields.io/badge/MySQL-8-4479A1?style=flat-square&logo=mysql&logoColor=white" alt="MySQL">
+    <img src="https://img.shields.io/badge/MySQL%2FMariaDB-8-4479A1?style=flat-square&logo=mysql&logoColor=white" alt="MySQL e MariaDB">
     <img src="https://img.shields.io/badge/React-19-20232A?style=flat-square&logo=react&logoColor=61DAFB" alt="React">
     <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript">
     <img src="https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite">
@@ -49,8 +57,16 @@
 Lumora é uma aplicação fullstack de e-commerce criada para simular uma loja de
 produtos de tecnologia no contexto brasileiro. O projeto prioriza uma
 experiência realista de compra: catálogo, filtros, detalhes do produto,
-carrinho, checkout, pedidos, estoque, painel administrativo e integração com
-Mercado Pago.
+carrinho, checkout, pedidos, estoque, painel administrativo, consulta de CEP,
+autenticação por token e pagamento com Mercado Pago.
+
+Aplicação publicada:
+
+<p>
+  <a href="https://lumora-eccomerce-em-laravel-react-production.up.railway.app">
+    <strong>https://lumora-eccomerce-em-laravel-react-production.up.railway.app</strong>
+  </a>
+</p>
 
 A identidade visual segue uma linha institucional-moderna, com azul profundo,
 ciano, verde, tipografia IBM Plex Sans e brilhos discretos para preservar uma
@@ -73,7 +89,9 @@ estética séria e tecnológica.
 - webhook de pagamento com processamento idempotente;
 - baixa de estoque somente após pagamento aprovado;
 - painel administrativo com dashboard, produtos, estoque e pedidos;
+- fila em banco de dados para operação compatível com deploy simples;
 - GraphQL com Lighthouse para consulta de catálogo;
+- scripts e documentação de deploy para Railway, Nginx, systemd e Supervisor;
 - dados iniciais com produtos reais de exemplo e imagens externas;
 - fallback visual caso uma imagem de produto não carregue.
 
@@ -142,6 +160,7 @@ webhook e permissões administrativas.
 | [![Mercado Pago][mercadopago-badge]][mercadopago-url] | Checkout Pro, Pix, cartão, retorno de pagamento e webhook |
 | [![ViaCEP][viacep-badge]][viacep-url] | Consulta de CEP e preenchimento de endereço no checkout |
 | [![Sanctum][sanctum-badge]][sanctum-url] | Autenticação por token e proteção de rotas privadas |
+| [![Railway][railway-badge]][railway-url] | Deploy da aplicação, banco MySQL/MariaDB e preparação para worker separado |
 
 ## Fluxo de compra
 
@@ -184,9 +203,17 @@ lumora-laravel-react/
 │   ├── fabricas/
 │   ├── migrations/
 │   └── semeadores/
+├── deploy/
+│   ├── nginx/
+│   ├── supervisor/
+│   └── systemd/
+├── docs/
 ├── graphql/
 ├── public/
+│   ├── build/
 │   └── imagens/
+│       └── marca/
+├── railway/
 ├── resources/
 │   ├── css/
 │   ├── js/
@@ -196,11 +223,10 @@ lumora-laravel-react/
 │   │   └── tipos/
 │   └── views/
 ├── routes/
-├── tests/
-└── docs/
+└── tests/
 ```
 
-## Como executar localmente
+## Como executar localmente no CachyOS/Linux
 
 ### Pré-requisitos
 
@@ -210,11 +236,22 @@ lumora-laravel-react/
 - Node.js 20 ou superior;
 - npm.
 
+No CachyOS/Arch, uma base típica é:
+
+```bash
+sudo pacman -Syu
+sudo pacman -S php composer nodejs npm mariadb git unzip curl
+```
+
+Habilite as extensões PHP necessárias no `php.ini`, especialmente `pdo_mysql`,
+`curl`, `openssl`, `mbstring`, `fileinfo`, `dom`, `xml`, `xmlwriter`, `zip`,
+`iconv` e, para testes, `pdo_sqlite`/`sqlite3`.
+
 ### Instalação
 
 ```bash
 composer install
-npm install
+npm ci
 cp .env.example .env
 php artisan key:generate
 ```
@@ -222,9 +259,9 @@ php artisan key:generate
 Depois de copiar o arquivo, ajuste os valores locais no `.env`. Nunca use
 credenciais reais em arquivos versionados.
 
-### Banco de dados
+### Banco de dados local
 
-Crie um banco MySQL chamado `lumora` e configure:
+Crie um banco MySQL/MariaDB local chamado `lumora` e configure o `.env` local:
 
 ```env
 DB_CONNECTION=mysql
@@ -241,6 +278,8 @@ Depois rode:
 php artisan migrate --seed
 ```
 
+O `.env` real é local e nunca deve ser versionado.
+
 ### Front-end
 
 Para desenvolvimento:
@@ -253,6 +292,14 @@ Para build de produção:
 
 ```bash
 npm run build
+```
+
+### Testes e validações
+
+```bash
+php artisan test
+npm run build
+npx tsc --noEmit
 ```
 
 ### Servidor Laravel
@@ -269,7 +316,14 @@ http://127.0.0.1:8000
 
 ## Usuários de desenvolvimento
 
-Os usuários criados pelo seeder devem ser configurados localmente no `.env`:
+Os usuários criados pelo seeder usam estes e-mails por padrão:
+
+| Papel | E-mail | Senha |
+|---|---|---|
+| Administrador | `admin@lumora.com.br` | configurada em `SEED_ADMIN_PASSWORD` |
+| Cliente | `cliente@lumora.com.br` | configurada em `SEED_CUSTOMER_PASSWORD` |
+
+Configure as senhas localmente no `.env`:
 
 ```env
 SEED_ADMIN_EMAIL=
@@ -283,7 +337,7 @@ em README, scripts, prints, issues ou pull requests.
 
 ## Mercado Pago
 
-Configure no `.env`:
+Configure localmente no `.env` ou, em produção, nas variáveis do Railway:
 
 ```env
 MERCADO_PAGO_ACCESS_TOKEN=
@@ -296,15 +350,125 @@ FRONTEND_URL=http://127.0.0.1:8000
 
 Durante desenvolvimento local, `MERCADO_PAGO_WEBHOOK_SECRET` pode ficar vazio.
 Nesse caso, o webhook aceita notificações sem validar assinatura. Em produção, o
-ideal é configurar o segredo no painel do Mercado Pago e preencher essa variável.
+segredo do webhook deve ser configurado no painel do Mercado Pago e informado
+somente como variável de ambiente.
+
+Webhook de produção:
+
+```text
+https://lumora-eccomerce-em-laravel-react-production.up.railway.app/api/webhooks/mercado-pago
+```
 
 ## Deploy seguro
 
-Consulte [docs/deploy.md](docs/deploy.md) antes de publicar a aplicação. O deploy
-de produção deve usar variáveis de ambiente gerenciadas pelo servidor/plataforma,
-`APP_DEBUG=false`, HTTPS, cookies seguros, segredo de webhook obrigatório,
-worker de fila supervisionado e rotação de qualquer chave que já tenha sido
-exposta fora de um cofre de secrets.
+O projeto está publicado no Railway:
+
+<p>
+  <a href="https://lumora-eccomerce-em-laravel-react-production.up.railway.app">
+    <img src="https://img.shields.io/badge/Abrir_deploy-Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white" alt="Abrir deploy no Railway">
+  </a>
+</p>
+
+O deploy completo usa:
+
+- serviço de app Laravel + React/Vite;
+- banco MySQL/MariaDB configurado por variáveis no painel do Railway;
+- fila com `QUEUE_CONNECTION=database`;
+- worker separado planejado/ideal para processar a fila continuamente;
+- Mercado Pago e ViaCEP configurados por variáveis de ambiente.
+
+Arquivos de deploy e operação:
+
+```text
+docs/deploy.md
+railway/init-app.sh
+railway/run-worker.sh
+deploy/nginx/lumora.conf.example
+deploy/systemd/lumora-queue.service.example
+deploy/supervisor/lumora-queue.conf.example
+```
+
+Comandos usados no Railway:
+
+```bash
+# build
+npm run build
+
+# pre-deploy
+chmod +x ./railway/init-app.sh && sh ./railway/init-app.sh
+
+# worker
+chmod +x ./railway/run-worker.sh && sh ./railway/run-worker.sh
+```
+
+`railway/init-app.sh` executa migrations com `--force` e caches Laravel. O
+worker usa `php artisan queue:work database --sleep=3 --tries=3 --timeout=90`.
+
+Consulte [docs/deploy.md](docs/deploy.md) antes de publicar mudanças. O deploy
+de produção deve usar `APP_DEBUG=false`, HTTPS, cookies seguros, segredo de
+webhook obrigatório, variáveis no Railway e rotação de qualquer chave exposta.
+
+### Variáveis de ambiente
+
+Configure no Railway ou no `.env` local, sempre sem versionar valores reais:
+
+```env
+APP_NAME
+APP_ENV
+APP_KEY
+APP_DEBUG
+APP_URL
+FRONTEND_URL
+
+DB_CONNECTION
+DB_HOST
+DB_PORT
+DB_DATABASE
+DB_USERNAME
+DB_PASSWORD
+
+CACHE_STORE
+QUEUE_CONNECTION
+SESSION_DRIVER
+SESSION_ENCRYPT
+SESSION_SECURE_COOKIE
+SESSION_HTTP_ONLY
+SESSION_SAME_SITE
+SESSION_DOMAIN
+
+SANCTUM_STATEFUL_DOMAINS
+SANCTUM_TOKEN_PREFIX
+
+VIACEP_URL
+CA_BUNDLE_PATH
+
+MERCADO_PAGO_ACCESS_TOKEN
+MERCADO_PAGO_PUBLIC_KEY
+MERCADO_PAGO_WEBHOOK_SECRET
+MERCADO_PAGO_SANDBOX
+
+SEED_ADMIN_EMAIL
+SEED_ADMIN_PASSWORD
+SEED_CUSTOMER_EMAIL
+SEED_CUSTOMER_PASSWORD
+
+MAIL_MAILER
+MAIL_HOST
+MAIL_PORT
+MAIL_USERNAME
+MAIL_PASSWORD
+MAIL_FROM_ADDRESS
+MAIL_FROM_NAME
+```
+
+### Segurança
+
+- não commite `.env`, `.env.*`, `*.save`, `*.bak` ou `*~`;
+- não publique `APP_KEY`, senha de banco, tokens do Mercado Pago, chaves de e-mail
+  ou senhas de usuários;
+- configure secrets no painel do Railway;
+- rotacione qualquer chave que tenha sido exposta;
+- não coloque senhas no README, scripts, Dockerfile, documentação ou issues.
 
 ## Rotas principais
 
@@ -439,15 +603,6 @@ npx tsc --noEmit
 php artisan test
 ```
 
-No Windows, se precisar forçar extensões SQLite para testes:
-
-```powershell
-php -d extension_dir=C:\php\ext `
-    -d extension=php_pdo_sqlite.dll `
-    -d extension=php_sqlite3.dll `
-    vendor\bin\phpunit
-```
-
 ## Contato
 
 - Portfólio: [jeffersontadeu.vercel.app](https://jeffersontadeu.vercel.app)
@@ -477,3 +632,5 @@ php -d extension_dir=C:\php\ext `
 [viacep-url]: https://viacep.com.br/
 [sanctum-badge]: https://img.shields.io/badge/Laravel_Sanctum-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
 [sanctum-url]: https://laravel.com/docs/sanctum
+[railway-badge]: https://img.shields.io/badge/Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white
+[railway-url]: https://railway.com/
